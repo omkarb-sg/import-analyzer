@@ -1,0 +1,14 @@
+/**
+ * 
+ * @param {boolean} assertion 
+ * @param {string} message 
+ */
+function assert(assertion, message) {
+    if (!assertion) {
+        throw new Error(message);
+    }
+}
+
+module.exports = {
+    assert,
+};
