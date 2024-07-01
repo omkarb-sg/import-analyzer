@@ -1,8 +1,5 @@
-const { parseManifestXml } = require("./src/parsing/manifest");
-const { readXml } = require("./src/xml/read");
+const { parseAml } = require("./src/parsing/aml");
 const path = require("path");
 
-const manifestPath = path.join(__dirname, "testexports/savetabs/imports.mf");
-
-const importManifest = parseManifestXml(readXml(manifestPath));
-
+const items = parseAml("testexports\\OLM_user_exit\\employee\\Import\\CommandBarSection\\sg_employe_transfer_owernship.xml")
+console.log(items);
