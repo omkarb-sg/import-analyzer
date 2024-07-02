@@ -1,6 +1,5 @@
-const { parseManifestXml } = require("./src/parsing/manifest");
-const { parsePackage } = require("./src/parsing/package");
-
-const manifestPath = "C:\\Users\\LP-T368\\Desktop\\ImportAnalyzer\\testexports\\someaddons\\imports.mf";
-const importManifest = parseManifestXml(manifestPath);
-const package = parsePackage(importManifest, importManifest.packages[0].name);
+const { PackageManager } = require("./src/packageManager");
+const packageManager = new PackageManager(
+	String.raw`C:\Users\LP-T368\Desktop\ImportAnalyzer\testexports\someaddons\imports.mf`
+);
+console.log(packageManager.packages);
