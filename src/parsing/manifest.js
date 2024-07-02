@@ -1,10 +1,11 @@
 const { assert } = require("../util/common");
+const { readXml } = require("../xml/read");
 
 /**
  * @typedef {Object} PackageInfo
  * @property {string} name
  * @property {string} path
- * @property {string} dependson
+ * @property {string[]} dependson
  */
 
 class ImportManifest {
@@ -13,6 +14,10 @@ class ImportManifest {
 		 * @type {PackageInfo[]}
 		 */
 		this.packages = [];
+		/**
+		 * @type {string | null}
+		 */
+		this.path = null;
 	}
 
 	/**
@@ -56,7 +61,9 @@ class ImportManifest {
  * @param {Document} manifestXml
  * @returns {ImportManifest}
  */
-function parseManifestXml(manifestXml) {
+function parseManifestXml(filepath) {
+	const manifestXml = readXml(filepath);
+
 	// Parse Xml
 	const importsNode = manifestXml.children[0];
 	assert(manifestXml.childElementCount === 1, "Invalid manifest, Expected single root element");
@@ -84,6 +91,7 @@ function parseManifestXml(manifestXml) {
 	for (const packageInfo of packageInfos) {
 		packageInfo.dependson.forEach((dependency) => importManifest.addDependency(packageInfo.name, dependency));
 	}
+	importManifest.path = filepath;
 
 	return importManifest;
 }

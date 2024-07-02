@@ -1,5 +1,6 @@
-const { parseAml } = require("./src/parsing/aml");
-const path = require("path");
+const { parseManifestXml } = require("./src/parsing/manifest");
+const { parsePackage } = require("./src/parsing/package");
 
-const items = parseAml("testexports\\OLM_user_exit\\employee\\Import\\CommandBarSection\\sg_employe_transfer_owernship.xml")
-console.log(items);
+const manifestPath = "C:\\Users\\LP-T368\\Desktop\\ImportAnalyzer\\testexports\\someaddons\\imports.mf";
+const importManifest = parseManifestXml(manifestPath);
+const package = parsePackage(importManifest, importManifest.packages[0].name);

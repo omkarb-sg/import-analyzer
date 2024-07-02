@@ -54,6 +54,7 @@ class Item {
 				for (let j = 0; j < this.xmlNode.children[i].childElementCount; j++) {
 					const relationshipItemNode = this.xmlNode.children[i].children[j];
 					const relationshipItem = new Item(relationshipItemNode);
+					// Not necessary if exported via export tool, but is necessary to follow AML rules
 					relationshipItem.properties["source_id"] = this;
 					this.relationships.push(relationshipItem);
 				}

@@ -9,6 +9,13 @@ function assert(assertion, message) {
     }
 }
 
+function warn(assertion, message) {
+    if (!assertion) {
+        console.log(`[WARN]: ${message}`);
+    }
+}
+
 module.exports = {
     assert,
+    warn
 };
