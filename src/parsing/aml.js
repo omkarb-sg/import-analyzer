@@ -17,6 +17,9 @@ class Item {
 		this.xmlNode = xmlNode;
 		this.attributes = {};
 		this.properties = [];
+		/**
+		 * @type {Item[]}
+		 */
 		this.relationships = [];
 
 		/**
@@ -112,7 +115,10 @@ class Item {
 		}
 
 		// Items from relationships
-		// for (const relationshipItem)
+		for (const relationshipItem of this.relationships) {
+			addedItems.push(...relationshipItem.addedItems);
+			requiredItems.push(...relationshipItem.requiredItems);
+		}
 		this.addedItems = addedItems;
 		this.requiredItems = requiredItems;
 	}
