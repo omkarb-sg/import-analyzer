@@ -81,6 +81,17 @@ class Package {
 			this.requiredItems.push(item);
 		})
 	}
+
+	validate() {
+		this.addedItems.forEach(item => {
+			assert(item.attributes["id"] != null, "Added item does not have ID");
+			assert(item.attributes["type"] != null, "Added item does not have type");
+		});
+		this.requiredItems.forEach(item => {
+			assert(item.attributes["id"] != null || item.attributes["action"] === "get", "Required item does not have ID");
+			assert(item.attributes["type"] != null, "Required item does not have type");
+		});
+	}
 }
 
 /**
@@ -135,6 +146,7 @@ function parsePackage(importManifest, packageName) {
 	}
 
 	package.updateAddsReqs();
+	package.validate();
 	return package;
 }
 

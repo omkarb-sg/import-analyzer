@@ -1,4 +1,4 @@
-const { assert } = require("../util/common");
+const { assert, warn } = require("../util/common");
 const { readXml } = require("../xml/read");
 
 class Item {
@@ -36,7 +36,7 @@ class Item {
 		} else {
 			this.attributes["type"] = alternativeItemParams.type;
 			this.attributes["id"] = alternativeItemParams.id;
-			this.properties["id"] = alternativeItemParams.id;
+			// this.properties["id"] = alternativeItemParams.id;
 		}
 		this.updateAddsReqs();
 	}
@@ -122,6 +122,24 @@ class Item {
 		}
 		this.addedItems = addedItems;
 		this.requiredItems = requiredItems;
+	}
+
+	/**
+	 * Other item is ideally one of the required items. This item will return
+	 * true if this item satisfies that required item.
+	 *
+	 * Please only call this on an added item.
+	 * @param {Item} otherItem
+	 * @returns {boolean}
+	 */
+	matches(otherItem) {
+		if (otherItem.attributes["action"] === "get") {
+			warn(false, "Item resolution for items with `get` attribute is TODO");
+		}
+		return (
+			this.attributes["id"] === otherItem.attributes["id"] &&
+			this.attributes["type"] === otherItem.attributes["type"]
+		);
 	}
 }
 
