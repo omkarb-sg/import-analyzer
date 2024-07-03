@@ -49,7 +49,7 @@ class PackageManager {
 				const dependedPackage = this.packages.find((_pckage) => {
 					_pckage.packageInfo.name === dependency;
 				});
-				warn(dependedPackage != null, `Cannot find dependency ${dependency} in parsed packages`);
+				// warn(dependedPackage != null, `Cannot find dependency ${dependency} in parsed packages`);
 				found = !!dependedPackage?.addedItems.find((addedItem) => addedItem.matches(item));
 				break;
 			}

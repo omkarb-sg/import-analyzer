@@ -134,8 +134,16 @@ class Item {
 	 */
 	matches(otherItem) {
 		if (otherItem.attributes["action"] === "get") {
-			warn(false, "Item resolution for items with `get` attribute is TODO");
+			assert(otherItem.attributes["id"] == null, "Unexpected, Item with action get has an attribute for ID");
+			// Other item's properties must match
+			for (const propertyname in otherItem.properties) {
+				if (otherItem.properties[propertyname] !== this.properties[propertyname]) {
+					return false;
+				}
+			}
+			return true;
 		}
+		// Item resolution for items with `edit` attribute is TODO
 		return (
 			this.attributes["id"] === otherItem.attributes["id"] &&
 			this.attributes["type"] === otherItem.attributes["type"]

@@ -64,31 +64,36 @@ class Package {
 		// Remove duplicates for Id only items and push
 		addedItems.forEach((item) => {
 			if (item.isIdOnly()) {
-				const itemExists = !!this.addedItems.find(_item => {
-					return _item.isIdOnly() && _item.attributes["id"] === item.attributes["id"]
-				})
+				const itemExists = !!this.addedItems.find((_item) => {
+					return _item.isIdOnly() && _item.attributes["id"] === item.attributes["id"];
+				});
 				if (itemExists) return;
 			}
 			this.addedItems.push(item);
 		});
-		requiredItems.forEach(item => {
+		requiredItems.forEach((item) => {
 			if (item.isIdOnly()) {
-				const itemExists = !!this.requiredItems.find(_item => {
-					return _item.isIdOnly() && _item.attributes["id"] === item.attributes["id"]
-				})
+				const itemExists = !!this.requiredItems.find((_item) => {
+					return _item.isIdOnly() && _item.attributes["id"] === item.attributes["id"];
+				});
 				if (itemExists) return;
 			}
 			this.requiredItems.push(item);
-		})
+		});
 	}
 
 	validate() {
-		this.addedItems.forEach(item => {
-			assert(item.attributes["id"] != null, "Added item does not have ID");
+		this.addedItems.forEach((item) => {
+			// warn(item.attributes["id"] != null, "Added item does not have ID");
 			assert(item.attributes["type"] != null, "Added item does not have type");
 		});
-		this.requiredItems.forEach(item => {
-			assert(item.attributes["id"] != null || item.attributes["action"] === "get", "Required item does not have ID");
+		this.requiredItems.forEach((item) => {
+			assert(
+				item.attributes["id"] != null ||
+					item.attributes["action"] === "get" ||
+					item.attributes["action"] === "edit",
+				"Required item does not have ID or action of get or edit"
+			);
 			assert(item.attributes["type"] != null, "Required item does not have type");
 		});
 	}
@@ -134,8 +139,11 @@ function parsePackage(importManifest, packageName) {
 		const itemtypepath = path.join(dirEntry.path, dirEntry.name);
 		warn(
 			dirEntry.isDirectory() === true,
-			`The directory ${packageDir} contains things other than directory: ${dirEntry.name}`
+			`The directory ${itemtypepath} contains things other than directory: ${dirEntry.name}`
 		);
+		if (!dirEntry.isDirectory()) {
+			continue;
+		}
 
 		// Read all files inside this itemtypepath
 		const itemtypedir = fs.readdirSync(itemtypepath, { withFileTypes: true }).forEach((dirEntry) => {
