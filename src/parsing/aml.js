@@ -3,14 +3,10 @@ const { readXml } = require("../xml/read");
 
 class Item {
 	/**
-	 * @typedef {Object} AlternativeItemParams
-	 * @property {string} type
-	 * @property {string} id
 	 *
 	 * @param {Element} xmlNode
-	 * @param {AlternativeItemParams} alternativeItemParams
 	 */
-	constructor(xmlNode, alternativeItemParams) {
+	constructor(xmlNode) {
 		/**
 		 * @type {Element}
 		 */
@@ -31,18 +27,19 @@ class Item {
 		 */
 		this.requiredItems = [];
 
-		if (this.xmlNode != null) {
+		if (this.xmlNode.tagName === "Item") {
 			this.populate();
 		} else {
-			this.attributes["type"] = alternativeItemParams.type;
-			this.attributes["id"] = alternativeItemParams.id;
-			// this.properties["id"] = alternativeItemParams.id;
+			this.populatePropertyItem();
 		}
 		this.updateAddsReqs();
 	}
 
 	populate() {
 		assert(this.xmlNode.tagName === "Item", "Invalid Item XML, Expected Item tag");
+		this.attributes = {};
+		this.properties = [];
+		this.relationships = [];
 		// Parse attributes
 		for (let i = 0; i < this.xmlNode.attributes.length; i++) {
 			this.attributes[this.xmlNode.attributes[i].name] = this.xmlNode.attributes[i].value;
@@ -73,12 +70,7 @@ class Item {
 			}
 			// Property which is an ID
 			if (this.xmlNode.children[i].getAttribute("type") != null) {
-				const propertyType = this.xmlNode.children[i].getAttribute("type");
-				const propertyId = this.xmlNode.children[i].innerHTML;
-				this.properties[this.xmlNode.children[i].tagName] = new Item(null, {
-					type: propertyType,
-					id: propertyId,
-				});
+				this.properties[this.xmlNode.children[i].tagName] = new Item(this.xmlNode.children[i]);
 				continue;
 			}
 			// Normal property value
@@ -86,8 +78,20 @@ class Item {
 		}
 	}
 
-	isIdOnly() {
-		return this.xmlNode == null;
+	populatePropertyItem() {
+		this.attributes = {};
+		this.properties = [];
+		this.relationships = [];
+		assert(this.xmlNode.childElementCount === 0, "Invalid AML, Property Item has xml children");
+		// Parse attributes
+		for (let i = 0; i < this.xmlNode.attributes.length; i++) {
+			this.attributes[this.xmlNode.attributes[i].name] = this.xmlNode.attributes[i].value;
+		}
+		this.attributes["id"] = this.xmlNode.innerHTML;
+	}
+
+	isPropertyItem() {
+		return this.xmlNode.tagName !== "Item";
 	}
 
 	updateAddsReqs() {
@@ -98,7 +102,7 @@ class Item {
 			addedItems.push(this);
 		}
 		if (
-			this.isIdOnly() ||
+			this.isPropertyItem() ||
 			this.attributes["action"]?.toLowerCase() === "get" ||
 			this.attributes["action"] === "edit"
 		) {

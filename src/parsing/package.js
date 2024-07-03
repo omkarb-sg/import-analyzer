@@ -63,18 +63,18 @@ class Package {
 
 		// Remove duplicates for Id only items and push
 		addedItems.forEach((item) => {
-			if (item.isIdOnly()) {
+			if (item.isPropertyItem()) {
 				const itemExists = !!this.addedItems.find((_item) => {
-					return _item.isIdOnly() && _item.attributes["id"] === item.attributes["id"];
+					return _item.isPropertyItem() && _item.attributes["id"] === item.attributes["id"];
 				});
 				if (itemExists) return;
 			}
 			this.addedItems.push(item);
 		});
 		requiredItems.forEach((item) => {
-			if (item.isIdOnly()) {
+			if (item.isPropertyItem()) {
 				const itemExists = !!this.requiredItems.find((_item) => {
-					return _item.isIdOnly() && _item.attributes["id"] === item.attributes["id"];
+					return _item.isPropertyItem() && _item.attributes["id"] === item.attributes["id"];
 				});
 				if (itemExists) return;
 			}
