@@ -47,7 +47,7 @@ class PackageManager {
 			for (let i = 0; i < pckage.packageInfo.dependson.length; i++) {
 				const dependency = pckage.packageInfo.dependson[i];
 				const dependedPackage = this.packages.find((_pckage) => {
-					_pckage.packageInfo.name === dependency;
+					return _pckage.packageInfo.name === dependency;
 				});
 				// warn(dependedPackage != null, `Cannot find dependency ${dependency} in parsed packages`);
 				found = !!dependedPackage?.addedItems.find((addedItem) => addedItem.matches(item));
