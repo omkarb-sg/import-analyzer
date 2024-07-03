@@ -153,6 +153,10 @@ class Item {
 			this.attributes["type"] === otherItem.attributes["type"]
 		);
 	}
+
+	getFileName() {
+		return this.xmlNode.ownerDocument.filepath;
+	}
 }
 
 /**
