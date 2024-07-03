@@ -12,7 +12,7 @@ class Item {
 		 */
 		this.xmlNode = xmlNode;
 		this.attributes = {};
-		this.properties = [];
+		this.properties = {};
 		/**
 		 * @type {Item[]}
 		 */
@@ -141,6 +141,14 @@ class Item {
 			assert(otherItem.attributes["id"] == null, "Unexpected, Item with action get has an attribute for ID");
 			// Other item's properties must match
 			for (const propertyname in otherItem.properties) {
+				let otherPropertyValue = otherItem.properties[propertyname];
+				let thisPropertyValue = this.properties[propertyname];
+				if (otherPropertyValue instanceof Item) {
+					otherPropertyValue = otherPropertyValue.attributes["id"];
+				}
+				if (thisPropertyValue instanceof Item) {
+					thisPropertyValue = thisPropertyValue.attributes["id"];
+				}
 				if (otherItem.properties[propertyname] !== this.properties[propertyname]) {
 					return false;
 				}

@@ -78,6 +78,13 @@ class Package {
 				});
 				if (itemExists) return;
 			}
+			// // Check duplicate for get item
+			// if (item.properties["action"] === "get") {
+			// 	const itemExists = !!this.req.find((_item) => {
+			// 		return _item.matches(item);
+			// 	});
+			// 	if (itemExists) return;
+			// }
 			this.requiredItems.push(item);
 		});
 	}
