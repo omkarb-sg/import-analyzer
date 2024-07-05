@@ -61,6 +61,8 @@ class Package {
 			});
 		}
 
+		// TODO: While removing duplicates remember where all places that item came from
+		// IDea: New type: UnresolvedItem - Will track its own things
 		// Remove duplicates for Id only items and push
 		addedItems.forEach((item) => {
 			if (item.isPropertyItem()) {

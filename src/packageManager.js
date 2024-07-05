@@ -1,5 +1,7 @@
 const { parseManifestXml, ImportManifest } = require("./parsing/manifest");
 const { parsePackage, Package } = require("./parsing/package");
+const { Item } = require("./parsing/aml");
+const { Aras } = require("./aras/aras");
 const { assert, warn } = require("./util/common");
 
 class PackageManager {
@@ -20,20 +22,63 @@ class PackageManager {
 		);
 	}
 
+	/**
+	 * @typedef {Object<string, Item[]>} UnresolvedItemsResult
+	 */
+
+	/**
+	 * @returns {UnresolvedItemsResult}
+	 */
 	resolveInternally() {
 		/**
-		 * @type {Object<string, import("./parsing/aml").Item[]>}
+		 * @type {UnresolvedItemsResult>}
 		 */
 		const unresolvedItems = {};
 		for (let i = 0; i < this.packages.length; i++) {
 			unresolvedItems[this.packages[i].packageInfo.name] = this._resolvePackageInternally(this.packages[i]);
 		}
-        return unresolvedItems;
+		return unresolvedItems;
+	}
+
+	/**
+	 * If Unresolved Items are passed, only those are checked
+	 * @param {Aras} aras
+	 * @param {UnresolvedItemsResult} unresolvedItemsResult
+	 * @returns {Promise<UnresolvedItemsResult>}
+	 */
+	async resolveExternally(aras, unresolvedItemsResult = null) {
+		// Resolve externally everything
+		if (unresolvedItemsResult == null) {
+			/**
+			 * @type {UnresolvedItemsResult>}
+			 */
+			const unresolvedItems = {};
+			for (let i = 0; i < this.packages.length; i++) {
+				unresolvedItems[this.packages[i].packageInfo.name] = await this._resolvePackageExternally(
+					aras,
+					this.packages[i]
+				);
+			}
+			return unresolvedItems;
+		}
+
+		// Only resolve unresolvedItemsResult items
+		const newUnresolvedItems = {};
+		for (const packagename in unresolvedItemsResult) {
+			let items = [];
+			for (let i = 0; i < unresolvedItemsResult[packagename].length; i++) {
+				if (!(await unresolvedItemsResult[packagename][i].isInAras(aras))) {
+					items.push(unresolvedItemsResult[packagename][i]);
+				}
+			}
+			newUnresolvedItems[packagename] = items;
+		}
+		return newUnresolvedItems;
 	}
 
 	/**
 	 * @param {Package} pckage
-	 * @returns {import("./parsing/aml").Item[]}
+	 * @returns {Item[]}
 	 */
 	_resolvePackageInternally(pckage) {
 		const unresolvedItems = [];
@@ -57,6 +102,24 @@ class PackageManager {
 			unresolvedItems.push(item);
 		});
 
+		return unresolvedItems;
+	}
+
+	/**
+	 * @param {Aras} aras
+	 * @param {Package} pckage
+	 * @returns {Promise<Item[]>}
+	 */
+	async _resolvePackageExternally(aras, pckage) {
+		const unresolvedItems = [];
+		for (let i = 0; i < pckage.requiredItems.length; i++) {
+			const item = pckage.requiredItems[i];
+			// Check if item is in database
+			const isInAras = await item.isInAras(aras);
+			if (!isInAras) {
+				unresolvedItems.push(item);
+			}
+		}
 		return unresolvedItems;
 	}
 }

@@ -1,3 +1,4 @@
+const { Aras } = require("../aras/aras");
 const { assert, warn } = require("../util/common");
 const { readXml } = require("../xml/read");
 
@@ -139,14 +140,21 @@ class Item {
 	matches(otherItem) {
 		if (otherItem.attributes["action"] === "get") {
 			assert(otherItem.attributes["id"] == null, "Unexpected, Item with action get has an attribute for ID");
+			assert(otherItem.relationships.length === 0, "Required item has relationships, too complex for me sorry");
 			// Other item's properties must match
 			for (const propertyname in otherItem.properties) {
 				let otherPropertyValue = otherItem.properties[propertyname];
 				let thisPropertyValue = this.properties[propertyname];
 				if (otherPropertyValue instanceof Item) {
+					assert(
+						otherPropertyValue.attributes["action"] != "get",
+						"Item with property action get, has nested property item with action get"
+					);
 					otherPropertyValue = otherPropertyValue.attributes["id"];
 				}
 				if (thisPropertyValue instanceof Item) {
+					// If thisPropertyValue is get item, thisItem can not resolve otherItem
+					// thisPropertyValue id will be undefined and will return false
 					thisPropertyValue = thisPropertyValue.attributes["id"];
 				}
 				if (otherItem.properties[propertyname] !== this.properties[propertyname]) {
@@ -160,6 +168,35 @@ class Item {
 			this.attributes["id"] === otherItem.attributes["id"] &&
 			this.attributes["type"] === otherItem.attributes["type"]
 		);
+	}
+
+	/**
+	 * @param {Aras} aras
+	 */
+	async isInAras(aras) {
+		// TODO: Can not resolve edit items
+		if (this.attributes["action"] === "edit") {
+			return false;
+		}
+
+		// If property item
+		if (this.isPropertyItem()) {
+			const type = this.attributes["type"];
+			const id = this.attributes["id"];
+			const response = await aras.applyAML(
+				`<AML><Item type="${type}" action="get" select="id" id="${id}"></Item></AML>`
+			);
+			return !aras.isFault(response);
+		}
+
+		// Get item
+		assert(this.attributes["action"] === "get", "action must be get if not propertyitem or edit");
+		const aml = [];
+		aml.push("<AML>");
+		aml.push(this.xmlNode.outerHTML);
+		aml.push("</AML>");
+		const response = await aras.applyAML(aml.join('\n'));
+		return !aras.isFault(response);
 	}
 
 	getFileName() {
