@@ -1,14 +1,17 @@
-const { PackageManager } = require("./src/packageManager");
-const packageManager = new PackageManager(
-	String.raw``
-);
-const unresolvedItems = packageManager.resolveInternally();
-for (const packagename in unresolvedItems) {
-	unresolvedItems[packagename].forEach((item) =>
-		console.log(
-			`Unresolved item ${packagename}: ${item.attributes["type"]} ${
-				item.attributes["id"] || item.attributes["action"]
-			}`
-		)
-	);
-}
+require("dotenv").config();
+const { Aras } = require("./src/aras/aras");
+
+const run = async () => {
+	const aras = new Aras();
+	await aras.authenticate();
+	const response = await aras.applyAML(`
+<AML>
+	<Item type="ItemType" action="get" select="*">
+		<name>ItemType</name>
+	</Item>
+</AML>
+	`);
+	console.log(aras.isFault(response));
+};
+
+run();
