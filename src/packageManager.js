@@ -122,6 +122,14 @@ class PackageManager {
 		}
 		return unresolvedItems;
 	}
+
+	/**
+	 * 
+	 * @param {Aras} aras 
+	 */
+	async resolvePackageGroups(aras) {
+		warn(false, "Package group resolution not implemented");
+	}
 }
 
 module.exports = {

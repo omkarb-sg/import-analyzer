@@ -32,6 +32,7 @@ class Aras {
 		});
 
 		const data = await response.json();
+		assert(data.error == null, data.error + ' ' + data.error_description);
 		this.authResponse = data;
 	}
 

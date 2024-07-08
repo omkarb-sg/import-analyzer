@@ -161,6 +161,7 @@ function parsePackage(importManifest, packageName) {
 			items.forEach((item) => package.addItem(itemtypename, item));
 		});
 	}
+	packageDir.close();
 
 	package.updateAddsReqs();
 	package.validate();
