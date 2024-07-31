@@ -83,6 +83,20 @@ class PackageManager {
 	_resolvePackageInternally(pckage) {
 		const unresolvedItems = [];
 		pckage.requiredItems.forEach((item) => {
+			// If property item, return true for OOTB properties
+			if (
+				item.attributes["type"] === "Property" &&
+				item.attributes["action"] === "get" &&
+				typeof item.properties["name"] === "string" &&
+				// TODO: write all ootb properties here
+				["created_by_id", "managed_by_id", "owned_by_id"].includes(item.properties["name"])
+			) {
+				// <Item type="Property" action="get">
+				// 	<name>owned_by_id</name>
+				// </Item>
+				return;
+			}
+
 			let found = false;
 			// Check in same package
 			found = !!pckage.addedItems.find((addedItem) => addedItem.matches(item));
