@@ -24,6 +24,7 @@ class PackageManager {
 
 	/**
 	 * @typedef {Object<string, Item[]>} UnresolvedItemsResult
+	 * From package name to list of items
 	 */
 
 	/**
@@ -82,6 +83,7 @@ class PackageManager {
 	 */
 	_resolvePackageInternally(pckage) {
 		const unresolvedItems = [];
+		let ignoredEditItems = 0;
 		pckage.requiredItems.forEach((item) => {
 			// If property item, return true for OOTB properties
 			if (
@@ -94,6 +96,12 @@ class PackageManager {
 				// <Item type="Property" action="get">
 				// 	<name>owned_by_id</name>
 				// </Item>
+				return;
+			}
+
+			// Ignore items with action="edit"
+			if (item.attributes["action"] === "edit") {
+				ignoredEditItems++; // TODO this variable is unused for now
 				return;
 			}
 

@@ -195,12 +195,23 @@ class Item {
 		aml.push("<AML>");
 		aml.push(this.xmlNode.outerHTML);
 		aml.push("</AML>");
-		const response = await aras.applyAML(aml.join('\n'));
+		const response = await aras.applyAML(aml.join("\n"));
 		return !aras.isFault(response);
 	}
 
 	getFileName() {
 		return this.xmlNode.ownerDocument.filepath;
+	}
+
+	/**
+	 * 
+	 * @returns {string}
+	 */
+	toString() {
+		return JSON.stringify({
+			filepath: this.xmlNode.ownerDocument.filepath,
+			node: this.xmlNode.outerHTML,
+		});
 	}
 }
 

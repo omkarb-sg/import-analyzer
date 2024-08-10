@@ -18,6 +18,7 @@ class Aras {
 	}
 
 	async authenticate() {
+		console.log("Authenticating...");
 		const response = await fetch(process.env.TOKEN_URL, {
 			method: "POST",
 			body: new URLSearchParams({
@@ -32,8 +33,9 @@ class Aras {
 		});
 
 		const data = await response.json();
-		assert(data.error == null, data.error + ' ' + data.error_description);
+		assert(data.error == null, data.error + " " + data.error_description);
 		this.authResponse = data;
+		return this;
 	}
 
 	/**
@@ -42,7 +44,11 @@ class Aras {
 	 * @returns {Promise<string>}
 	 */
 	async applyAML(aml) {
-		assert(this.authResponse != null, "Aras object not authenticated");
+		// assert(this.authResponse != null, "Aras object not authenticated");
+		if (this.authResponse == null) {
+			await this.authenticate();
+		}
+
 		const response = await fetch(process.env.INNOVATOR_SERVER_URL, {
 			method: "POST",
 			body: aml,
@@ -61,14 +67,14 @@ class Aras {
 	 * @returns {boolean}
 	 */
 	isFault(response) {
-        const doc = readXml(null, response);
-        const result = doc.querySelector("Result")
-        const fault = doc.querySelector("Fault");
-        if (result && fault) {
-            assert(false, "Response contains both Result and Fault");
-        }
-        return !!fault;
-    }
+		const doc = readXml(null, response);
+		const result = doc.querySelector("Result");
+		const fault = doc.querySelector("Fault");
+		if (result && fault) {
+			assert(false, "Response contains both Result and Fault");
+		}
+		return !!fault;
+	}
 }
 
 module.exports = {
