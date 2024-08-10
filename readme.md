@@ -23,8 +23,23 @@ By addressing these issues upfront, Import Analyzer prevents partial imports and
    node main.js /path/to/manifest.mf
    ```
    - You can redirect the output to a text file for easier review.
+   
+3. **Example output**:
+   In the package chess, an identity was not exported (used in life cycle map)
+   ```
+   Authenticating...
+   --- Unresolved ---
+   {
+     chess: [
+       {
+         filepath: 'C:\\Users\\LP-T368\\Desktop\\Projects\\aras-chess\\chess\\Import\\Life Cycle Map\\chess.xml',
+         node: '<role keyed_name="Aras Chess" type="Identity">74E2D2E4521544C9941A086295F59D21</role>'
+       }
+     ]
+   }
+   ```
 
-3. **Configuration**:
+5. **Configuration**:
    - You can modify `config.js` to change default settings.
    - If the tool needs to resolve objects via the database, ensure your database credentials are correctly set in the `.env` file. Use the `.env.example` file as a template.
 
