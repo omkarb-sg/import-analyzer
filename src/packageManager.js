@@ -91,7 +91,31 @@ class PackageManager {
 				item.attributes["action"] === "get" &&
 				typeof item.properties["name"] === "string" &&
 				// TODO: write all ootb properties here
-				["created_by_id", "managed_by_id", "owned_by_id"].includes(item.properties["name"])
+				[
+					"classification",
+					"config_id",
+					"created_by_id",
+					"created_on",
+					"css",
+					"current_state",
+					"generation",
+					"id",
+					"is_current",
+					"is_released",
+					"keyed_name",
+					"locked_by_id",
+					"major_rev",
+					"managed_by_id",
+					"minor_rev",
+					"modified_by_id",
+					"modified_on",
+					"new_version",
+					"not_lockable",
+					"owned_by_id",
+					"permission_id",
+					"state",
+					"team_id",
+				].includes(item.properties["name"])
 			) {
 				// <Item type="Property" action="get">
 				// 	<name>owned_by_id</name>
@@ -146,8 +170,8 @@ class PackageManager {
 	}
 
 	/**
-	 * 
-	 * @param {Aras} aras 
+	 *
+	 * @param {Aras} aras
 	 */
 	async resolvePackageGroups(aras) {
 		warn(false, "Package group resolution not implemented");
