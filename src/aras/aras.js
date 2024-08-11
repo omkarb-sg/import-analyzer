@@ -58,7 +58,7 @@ class Aras {
 				Authorization: `Bearer ${this.authResponse.access_token}`,
 			},
 		});
-		return response.body.read().toString();
+		return await response.text();
 	}
 
 	/**
